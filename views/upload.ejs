@@ -5,18 +5,13 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Void Uploader</title>
+    <title>Upload</title>
 </head>
 <body>
-    <!-- header -->
-    <%- include('components/header', { user: locals.user}) %>
-
-    <section>
-        <h1>File upload</h1>
-        <button><a href="/upload-form">Upload</a></button>
-    </section>
-
-    <!-- footer -->
-    <%- include('components/footer') %>
+    <h1>File Upload</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
 </body>
 </html>
