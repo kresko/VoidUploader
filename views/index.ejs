@@ -11,10 +11,35 @@
     <!-- header -->
     <%- include('components/header', { user: locals.user}) %>
 
+    <% if (locals.user) {%>
     <section>
-        <h1>File upload</h1>
-        <button><a href="/upload-form">Upload</a></button>
+        <div class="create-folder-button-container">
+            <form action="/create-new-folder" method="post">
+                <input type="text" placeholder="Folder Name" name="folderName">
+
+                <button>Create new folder</button>
+            </form>
+        </div>
+
+        <% if (!folders) { %>
+            <h1>There is no folders</h1>
+        <% } else { %>
+                <h1>File Upload</h1>
+
+            <% folders.forEach(folder => { %>
+                <h2><%= folder.name %></h2>
+
+                <form action="/" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file" required>
+                    <button type="submit">Upload</button>
+                    <button><a href="/delete-folder/<%= folder.id %>">Delete</a></button>
+                </form>
+            <% }) %>
+
+        <% } %>
+
     </section>
+    <% } %>
 
     <!-- footer -->
     <%- include('components/footer') %>
