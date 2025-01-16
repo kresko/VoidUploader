@@ -38,6 +38,14 @@ async function getAllFoldersByUserId(userId) {
     })
 }
 
+async function getFolderNameById(folderId) {
+    return await prisma.folders.findFirst({
+        where: {
+            id: parseInt(folderId)
+        }
+    })
+}
+
 async function insertNewFolder(folderName, userId) {
     return await prisma.folders.create({
         data: {
@@ -61,5 +69,6 @@ module.exports = {
     getUsersById,
     getAllFoldersByUserId,
     insertNewFolder,
-    deleteFolder
+    deleteFolder,
+    getFolderNameById
 }
