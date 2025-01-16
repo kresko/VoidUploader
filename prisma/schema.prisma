@@ -26,4 +26,14 @@ model User {
     password String
     firstName String
     lastName String
+    folders Folders[]
+}
+
+model Folders {
+    id Int @id @default(autoincrement())
+    name String
+    user User @relation(fields: [userId], references: [id])
+    userId Int
+
+    @@unique([name, userId])
 }

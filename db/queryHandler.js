@@ -1,11 +1,10 @@
 const bcrypt = require("bcryptjs");
 const { PrismaClient } = require('@prisma/client')
-
 const prisma = new PrismaClient()
 
 async function registerUser(user) {
     const hashedPassword = await bcrypt.hash(user.password, 10);
-    const test = await prisma.user.create({
+    await prisma.user.create({
         data: {
             email: user.email,
             password: hashedPassword,
@@ -13,8 +12,6 @@ async function registerUser(user) {
             lastName: user.lastName,
         }
     });
-
-    const test2 = '';
 }
 
 async function getUsersByUsername(email) {
@@ -33,8 +30,36 @@ async function getUsersById(id) {
     });
 }
 
+async function getAllFoldersByUserId(userId) {
+    return await prisma.folders.findMany({
+        where: {
+            userId: userId
+        }
+    })
+}
+
+async function insertNewFolder(folderName, userId) {
+    return await prisma.folders.create({
+        data: {
+            name: folderName,
+            userId: userId
+        }
+    })
+}
+
+async function deleteFolder(folderId) {
+    return await prisma.folders.delete({
+        where: {
+            id: parseInt(folderId)
+        }
+    })
+}
+
 module.exports = {
     registerUser,
     getUsersByUsername,
-    getUsersById
+    getUsersById,
+    getAllFoldersByUserId,
+    insertNewFolder,
+    deleteFolder
 }
