@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    width: 100%;
+    height: 70px;
+    background: aqua;
+    margin-bottom: 20px;
+}
+
+.create-folder-button-container {
+    margin: 20px 0;
+}
+
+section h1 {
+    margin: 20px 0;
+}
+
+section form {
+    margin: 20px 0;
+}
+
+footer {
+    width: 100%;
+    height: 70px;
+    background: aqua;
+    margin-top: 20px;
+}
+
+.file-info-container {
+    display: flex;
+}
