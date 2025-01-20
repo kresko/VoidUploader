@@ -13,6 +13,12 @@
 
     <% if (locals.user) {%>
     <section>
+        <% if (error) { %>
+            <div class="error-message-container">
+                <div class="error-message">Duplicated folder name!</div>
+            </div>
+        <% } %>
+
         <div class="create-folder-button-container">
             <form action="/create-new-folder" method="post">
                 <input type="text" placeholder="Folder Name" name="folderName">
@@ -24,7 +30,7 @@
         <% if (!folders) { %>
             <h1>There is no folders</h1>
         <% } else { %>
-                <h1>File Upload</h1>
+            <h1>File Upload</h1>
 
             <% folders.forEach(folder => { %>
                 <h2><%= folder.name %></h2>
