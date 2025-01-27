@@ -1,12 +1,21 @@
 const { upload, uploadMiddleware } = require("../upload");
 const db = require("../db/queryHandler");
 const { mkdir, rm } = require('fs');
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SERVICE_ROLE_KEY);
 
 async function renderHomepage(req, res) {
     const userId = req.user ? req.user.id : 0;
     const folders = await db.getAllFoldersByUserId(userId);
     const files = await db.getAllFiles();
     const error = req.query.error;
+
+    //correct this and debug it thoroughly, stavi signed url ako je potrebno
+    //const { publicUrl } = supabase.storage
+        //.from('uploads')
+        //.getPublicUrl(`public/${originalname}`);
 
     res.render('index', { user: req.user, folders: folders, files: files, error: error });
 }
@@ -15,11 +24,12 @@ async function renderUploadForm(req, res) {
     res.render('upload', { user: req.user });
 }
 
+//to promeni
 const uploadFile = async (req, res) => {
     try {
         const folder = await db.getFolderByName(req.params.id);
-        await uploadMiddleware(req, res);
-        await db.insertNewFile(req.file, folder.id);
+        await uploadMiddleware(req, res, folder);
+        await db.insertNewFile(req.file, folder);
         res.redirect('/');
     } catch (e) {
         console.error(e);
@@ -54,9 +64,20 @@ async function deleteFolder(req, res) {
     res.redirect('/');
 }
 
-//TODO: finish functionality
 async function downloadFile(req, res) {
+    try {
+        const file = await db.getFileById(req.params.id);
 
+        res.download(file.path, file.name, (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error downloading file');
+            }
+        });
+    } catch (e) {
+        console.error(error);
+        res.status(500).send('An unexpected error occurred');
+    }
 }
 
 async function deleteFile(req, res) {

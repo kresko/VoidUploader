@@ -83,13 +83,13 @@ async function getFileById(fileId) {
     })
 }
 
-async function insertNewFile(file, folderId) {
-    return await prisma.files.create({
+async function insertNewFile(file, folder) {
+    return await prisma.files.create({ // tu je pucalo provjeri zkj
         data: {
-            name: file.filename,
+            name: file.originalname,
             size: file.size,
-            path: file.path,
-            folderId: folderId
+            path: `/${folder.name}/${file.originalname}`,
+            folderId: folder.id
         }
     });
 }
