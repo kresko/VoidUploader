@@ -7,7 +7,6 @@ const path = require('node:path');
 const assetsPath = path.join(__dirname, 'public');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('@prisma/client');
-const upload = require('./upload');
 
 const authRouter = require('./routes/authRouter');
 const indexRouter = require("./routes/indexRouter");
