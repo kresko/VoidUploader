@@ -8,16 +8,6 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SERVICE_ROLE
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Set up storage for uploaded files
-//const storage = multer.diskStorage({
-//    destination: (req, file, cb) => {
-//        cb(null, `uploads/${req.params.id}/`); //zameni ime bucketa
-//    },
-//    filename: (req, file, cb) => {
-//        cb(null, Date.now() + '-' + file.originalname);
-//    }
-//});
-
 const uploadMiddleware = (req, res, folder) => {
     return new Promise((resolve, reject) => {
         upload.single('file')(req, res, async (err) => {
@@ -58,10 +48,47 @@ const uploadMiddleware = (req, res, folder) => {
     });
 };
 
-// Create the multer instance
-//const upload = multer({ storage: storage });
+const deleteMiddleware = async (filePath) => {
+    try {
+        const { data, error } = await supabase.storage
+            .from('void-uploader') // Replace 'void-uploader' with your bucket name
+            .remove([filePath]); // File path to delete (as an array)
+
+        if (error) {
+            console.error('Error deleting file:', error.message);
+            throw new Error('Failed to delete file');
+        }
+
+        console.log('File deleted successfully:', data);
+        return data; // Returns an array of deleted file paths
+    } catch (err) {
+        console.error('Unexpected error while deleting file:', err);
+        throw err;
+    }
+};
+
+const downloadMiddleware = async (filePath) => {
+    try {
+        const { data, error } = await supabase.storage
+            .from('void-uploader') // Replace 'void-uploader' with your bucket name
+            .download(filePath); // File path to download
+
+        if (error) {
+            console.error('Error downloading file:', error.message);
+            throw new Error('Failed to download file');
+        }
+
+        console.log('File downloaded successfully:', data);
+        return data; // `data` is a Blob (binary data)
+    } catch (err) {
+        console.error('Unexpected error while downloading file:', err);
+        throw err;
+    }
+};
 
 module.exports = {
     upload,
-    uploadMiddleware
+    uploadMiddleware,
+    deleteMiddleware,
+    downloadMiddleware
 };

@@ -1,21 +1,16 @@
-const { upload, uploadMiddleware } = require("../upload");
+const { upload, uploadMiddleware, downloadMiddleware, deleteMiddleware } = require("../upload");
 const db = require("../db/queryHandler");
 const { mkdir, rm } = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SERVICE_ROLE_KEY);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SERVICE_ROLE_KEY); //pogledaj dal ti treba
 
 async function renderHomepage(req, res) {
     const userId = req.user ? req.user.id : 0;
     const folders = await db.getAllFoldersByUserId(userId);
     const files = await db.getAllFiles();
     const error = req.query.error;
-
-    //correct this and debug it thoroughly, stavi signed url ako je potrebno
-    //const { publicUrl } = supabase.storage
-        //.from('uploads')
-        //.getPublicUrl(`public/${originalname}`);
 
     res.render('index', { user: req.user, folders: folders, files: files, error: error });
 }
@@ -24,7 +19,6 @@ async function renderUploadForm(req, res) {
     res.render('upload', { user: req.user });
 }
 
-//to promeni
 const uploadFile = async (req, res) => {
     try {
         const folder = await db.getFolderByName(req.params.id);
@@ -67,27 +61,21 @@ async function deleteFolder(req, res) {
 async function downloadFile(req, res) {
     try {
         const file = await db.getFileById(req.params.id);
+        const fileToDownload = await downloadMiddleware(file.path);
 
-        res.download(file.path, file.name, (err) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error downloading file');
-            }
-        });
+        res.setHeader('content-type', fileToDownload.type);
+        res.setHeader('Content-Disposition', `attachment; filename="${file.name}"`)
+        res.send(fileToDownload);
     } catch (e) {
         console.error(error);
         res.status(500).send('An unexpected error occurred');
     }
 }
 
-async function deleteFile(req, res) {
+async function deleteFile(req, res) {  funkcionalnost
     const file = await db.getFileById(req.params.id);
-    const folder = await db.getFolderNameById(file.folderId);
+    await deleteMiddleware(file.path);
     await db.deleteFile(req.params.id);
-
-    rm(`./uploads/${folder.name}/${file.name}`, { recursive: true }, (err) => {
-        if (err) throw err;
-    });
 
     res.redirect('/');
 }
