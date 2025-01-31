@@ -1,6 +1,5 @@
 const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs').promises;
 require('dotenv').config();
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SERVICE_ROLE_KEY);
@@ -24,13 +23,12 @@ const uploadMiddleware = (req, res, folder) => {
 
                 console.log('Uploading file:', originalname);
 
-                // Upload file to Supabase Storage
                 const { data, error } = await supabase.storage
-                    .from('void-uploader') // Replace 'void-uploader' with your bucket name
-                    .upload(filePath, buffer, { // tu dodaj ime foldera
-                        cacheControl: '3600', // Cache control headers
-                        upsert: false, // Prevent overwriting files
-                        contentType: req.file.mimetype, // Set content type
+                    .from('void-uploader')
+                    .upload(filePath, buffer, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        contentType: req.file.mimetype,
                     });
 
                 if (error) {
@@ -50,9 +48,11 @@ const uploadMiddleware = (req, res, folder) => {
 
 const deleteMiddleware = async (filePath) => {
     try {
+        const correctedFilePath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
+
         const { data, error } = await supabase.storage
-            .from('void-uploader') // Replace 'void-uploader' with your bucket name
-            .remove([filePath]); // File path to delete (as an array)
+            .from('void-uploader')
+            .remove([correctedFilePath]);
 
         if (error) {
             console.error('Error deleting file:', error.message);
@@ -60,9 +60,47 @@ const deleteMiddleware = async (filePath) => {
         }
 
         console.log('File deleted successfully:', data);
-        return data; // Returns an array of deleted file paths
+        return data;
     } catch (err) {
         console.error('Unexpected error while deleting file:', err);
+        throw err;
+    }
+};
+
+const deleteFolderMiddleware = async (folderPath) => {
+    try {
+        console.log(`Deleting folder: ${folderPath}`);
+
+        const correctedFolderPath = folderPath.startsWith('/') ? folderPath.slice(1) : folderPath;
+
+        const { data: files, error: listError } = await supabase.storage
+            .from('void-uploader')
+            .list(correctedFolderPath);
+
+        if (listError) {
+            console.error('Error listing folder contents:', listError.message);
+            throw new Error('Failed to list folder contents');
+        }
+
+        if (!files.length) {
+            console.log('Folder is already empty.');
+            return;
+        }
+
+        const filePaths = files.map(file => `${correctedFolderPath}/${file.name}`);
+
+        const { error: deleteError } = await supabase.storage
+            .from('void-uploader')
+            .remove(filePaths);
+
+        if (deleteError) {
+            console.error('Error deleting files:', deleteError.message);
+            throw new Error('Failed to delete files in the folder');
+        }
+
+        console.log(`Folder '${folderPath}' deleted successfully.`);
+    } catch (err) {
+        console.error('Unexpected error while deleting folder:', err);
         throw err;
     }
 };
@@ -70,8 +108,8 @@ const deleteMiddleware = async (filePath) => {
 const downloadMiddleware = async (filePath) => {
     try {
         const { data, error } = await supabase.storage
-            .from('void-uploader') // Replace 'void-uploader' with your bucket name
-            .download(filePath); // File path to download
+            .from('void-uploader')
+            .download(filePath);
 
         if (error) {
             console.error('Error downloading file:', error.message);
@@ -79,7 +117,7 @@ const downloadMiddleware = async (filePath) => {
         }
 
         console.log('File downloaded successfully:', data);
-        return data; // `data` is a Blob (binary data)
+        return data;
     } catch (err) {
         console.error('Unexpected error while downloading file:', err);
         throw err;
@@ -90,5 +128,6 @@ module.exports = {
     upload,
     uploadMiddleware,
     deleteMiddleware,
+    deleteFolderMiddleware,
     downloadMiddleware
 };

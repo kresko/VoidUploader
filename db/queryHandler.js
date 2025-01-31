@@ -64,6 +64,12 @@ async function insertNewFolder(folderName, userId) {
 }
 
 async function deleteFolder(folderId) {
+    await prisma.files.deleteMany({
+        where: {
+            folderId: parseInt(folderId)
+        }
+    })
+
     return await prisma.folders.delete({
         where: {
             id: parseInt(folderId)
