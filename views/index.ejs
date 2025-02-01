@@ -46,7 +46,7 @@
                     <% if (folder.id === file.folderId) { %>
                         <div class="file-info-container">
                             <p><%= file.name %></p>
-                            <p><%= file.size %></p> <!-- konvertiraj size u normalnu jedinicu -->
+                            <p><%= file.size %></p> <!-- TODO: convert to readable unit -->
                             <button><a href="/download-file/<%= file.id %>">Download</a></button>
                             <button><a href="/delete-file/<%= file.id %>">Delete</a></button>
                         </div>

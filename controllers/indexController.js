@@ -1,10 +1,5 @@
-const { upload, uploadMiddleware, downloadMiddleware, deleteMiddleware } = require("../upload");
+const { upload, uploadMiddleware, downloadMiddleware, deleteMiddleware, deleteFolderMiddleware } = require("../upload");
 const db = require("../db/queryHandler");
-const { mkdir, rm } = require('fs');
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SERVICE_ROLE_KEY); //pogledaj dal ti treba
 
 async function renderHomepage(req, res) {
     const userId = req.user ? req.user.id : 0;
@@ -34,10 +29,6 @@ const uploadFile = async (req, res) => {
 async function  createNewFolder(req, res) {
     try {
         await db.insertNewFolder(req.body.folderName, req.user.id);
-
-        mkdir(`./uploads/${req.body.folderName}`, { recursive: true }, (err) => {
-            if (err) throw err;
-        });
     } catch(e) {
         if (e.code === 'P2002') {
             return res.redirect('/?error=duplicated-folder');
@@ -49,11 +40,8 @@ async function  createNewFolder(req, res) {
 
 async function deleteFolder(req, res) {
     const folder = await db.getFolderNameById(req.params.id);
+    await deleteFolderMiddleware(folder.name);
     await db.deleteFolder(req.params.id);
-
-    rm(`./uploads/${folder.name}`, { recursive: true }, (err) => {
-        if (err) throw err;
-    });
 
     res.redirect('/');
 }
@@ -72,7 +60,7 @@ async function downloadFile(req, res) {
     }
 }
 
-async function deleteFile(req, res) {  funkcionalnost
+async function deleteFile(req, res) {
     const file = await db.getFileById(req.params.id);
     await deleteMiddleware(file.path);
     await db.deleteFile(req.params.id);
