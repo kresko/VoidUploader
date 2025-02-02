@@ -46,10 +46,11 @@ async function getFolderNameById(folderId) {
     })
 }
 
-async function getFolderByName(folderName) {
+async function getFolderByName(folderName, userId) {
     return await prisma.folders.findFirst({
         where: {
-            name: folderName
+            name: folderName,
+            userId: userId
         }
     })
 }
@@ -90,7 +91,7 @@ async function getFileById(fileId) {
 }
 
 async function insertNewFile(file, folder) {
-    return await prisma.files.create({ // tu je pucalo provjeri zkj
+    return await prisma.files.create({
         data: {
             name: file.originalname,
             size: file.size,

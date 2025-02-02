@@ -12,7 +12,7 @@ async function renderHomepage(req, res) {
 
 const uploadFile = async (req, res) => {
     try {
-        const folder = await db.getFolderByName(req.params.id);
+        const folder = await db.getFolderByName(req.params.id, req.user.id);
         await uploadMiddleware(req, res, folder);
         await db.insertNewFile(req.file, folder);
         res.redirect('/');
