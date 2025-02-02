@@ -14,49 +14,59 @@
 
     <% if (locals.user) {%>
     <section>
-        <% if (error) { %>
-            <div class="error-message-container">
-                <div class="error-message">Duplicated folder name!</div>
+        <div class="index-container">
+            <div id="index-form">
+                <% if (error) { %>
+                    <div class="error-message-container">
+                        <div class="error-message">Duplicated folder name!</div>
+                    </div>
+                <% } %>
+
+                <div class="create-folder-button-container">
+                    <form action="/create-new-folder" method="post">
+                        <input type="text" placeholder="Folder Name" name="folderName">
+
+                        <button>Create new folder</button>
+                    </form>
+                </div>
+
+                <% if (!folders) { %>
+                    <h1>There is no folders</h1>
+                <% } else { %>
+                    <h1>File Upload</h1>
+
+                    <% folders.forEach(folder => { %>
+                        <h2><%= folder.name %></h2>
+
+                        <form id="index-upload-form" action="/upload/<%= folder.name%>" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="file" required>
+                            <button type="submit">Upload</button>
+                            <button><a href="/delete-folder/<%= folder.id %>">Delete</a></button>
+                        </form>
+
+                        <% files.forEach(file => { %>
+                            <% if (folder.id === file.folderId) { %>
+                                <div class="file-info-container">
+                                    <p><%= file.name %></p>
+                                    <p><%= file.size %></p> <!-- TODO: convert to readable unit -->
+                                    <button><a href="/download-file/<%= file.id %>">Download</a></button>
+                                    <button><a href="/delete-file/<%= file.id %>">Delete</a></button>
+                                </div>
+                            <% } %>
+                        <% }) %>
+                    <% }) %>
+
+                <% } %>
             </div>
-        <% } %>
-
-        <div class="create-folder-button-container">
-            <form action="/create-new-folder" method="post">
-                <input type="text" placeholder="Folder Name" name="folderName">
-
-                <button>Create new folder</button>
-            </form>
         </div>
-
-        <% if (!folders) { %>
-            <h1>There is no folders</h1>
-        <% } else { %>
-            <h1>File Upload</h1>
-
-            <% folders.forEach(folder => { %>
-                <h2><%= folder.name %></h2>
-
-                <form action="/upload/<%= folder.name%>" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="file" required>
-                    <button type="submit">Upload</button>
-                    <button><a href="/delete-folder/<%= folder.id %>">Delete</a></button>
-                </form>
-
-                <% files.forEach(file => { %>
-                    <% if (folder.id === file.folderId) { %>
-                        <div class="file-info-container">
-                            <p><%= file.name %></p>
-                            <p><%= file.size %></p> <!-- TODO: convert to readable unit -->
-                            <button><a href="/download-file/<%= file.id %>">Download</a></button>
-                            <button><a href="/delete-file/<%= file.id %>">Delete</a></button>
-                        </div>
-                    <% } %>
-                <% }) %>
-            <% }) %>
-
-        <% } %>
-
     </section>
+    <% } else { %>
+        <div class="info-container">
+            <h1>Welcome to Void Uploader</h1>
+
+            <p>Void uploader is application which allows user to upload their files to cloud storage.</p>
+            <p>Please register</p>
+        </div>
     <% } %>
 
     <!-- footer -->

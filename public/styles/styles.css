@@ -3,6 +3,15 @@
     padding: 0;
 }
 
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*--------------- HEADER --------------------*/
 header {
     width: 100%;
     height: 70px;
@@ -10,8 +19,67 @@ header {
     margin-bottom: 20px;
 }
 
-.create-folder-button-container {
-    margin: 20px 0;
+header nav {
+    width: 100%;
+    height: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header nav .auth-button-container,
+header nav .home-button-container {
+    padding: 0 15px;
+}
+
+header nav button,
+.form-container #login-form button,
+.form-container #register-form button,
+.file-info-container button,
+#index-form #index-upload-form button {
+    border: 1px solid #fff;
+    border-radius: 6px;
+    padding: 10px 20px;
+    background: aqua;
+}
+
+header nav button a,
+.form-container #login-form button,
+.form-container #register-form button,
+.file-info-container button a,
+#index-form #index-upload-form button,
+#index-form #index-upload-form button a {
+    color: #fff;
+    text-decoration: none;
+}
+
+/*--------------- SECTION (LOGGED IN)--------------------*/
+.index-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create-folder-button-container form {
+    display: flex;
+    background-color: aqua;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.create-folder-button-container input {
+    width: 60%;
+    margin-right: 10px;
+    padding: 10px 10px;
+
+}
+
+.create-folder-button-container button {
+    width: 30%;
+    color: #fff;
+    background: aqua;
+    border: 1px solid #fff;
+    border-radius: 6px;
 }
 
 section h1 {
@@ -22,6 +90,58 @@ section form {
     margin: 20px 0;
 }
 
+.file-info-container {
+    display: flex;
+    margin: 10px;
+}
+
+.file-info-container button {
+    margin: 0 10px;
+}
+
+/*----------- LOGIN/REGISTER FORM -----------*/
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-container #login-form,
+.form-container #register-form,
+.index-container #index-form {
+    width: 30%;
+    display: inherit;
+    flex-direction: inherit;
+    background-color: aqua;
+    border-radius: 6px;
+    padding: 20px;
+    color: #fff;
+}
+
+.form-container #login-form input,
+.form-container #register-form input {
+    padding: 10px 5px;
+}
+
+.form-container #login-form h2,
+.form-container #login-form input,
+.form-container #register-form h2,
+.form-container #register-form input
+{
+    margin-bottom: 10px;
+}
+
+.form-container #login-form label,
+.form-container #register-form label {
+    margin-bottom: 5px;
+}
+
+.form-container #login-form button,
+.form-container #register-form button {
+    margin-top: 10px;
+}
+
+/*--------------- FOOTER --------------------*/
 footer {
     width: 100%;
     height: 70px;
@@ -29,6 +149,36 @@ footer {
     margin-top: 20px;
 }
 
-.file-info-container {
+footer .container {
+    width: 100%;
+    height: inherit;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+footer .container a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer .container a:hover {
+    text-decoration: underline;
+}
+
+/*--------------- SECTION (NOT LOGGED IN)--------------------*/
+.info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-container h1 {
+    margin-bottom : 10px;
+}
+
+.info-container p {
+    margin-top: 5px;
 }
