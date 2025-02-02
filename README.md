@@ -3,5 +3,5 @@ A simple file uploader
 
 TODO:
 - improve FE
-- add visual error handling
+- improve error, success message handling
 - add confirm password functionality
