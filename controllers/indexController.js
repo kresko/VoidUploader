@@ -10,10 +10,6 @@ async function renderHomepage(req, res) {
     res.render('index', { user: req.user, folders: folders, files: files, error: error });
 }
 
-async function renderUploadForm(req, res) {
-    res.render('upload', { user: req.user });
-}
-
 const uploadFile = async (req, res) => {
     try {
         const folder = await db.getFolderByName(req.params.id);
@@ -70,7 +66,6 @@ async function deleteFile(req, res) {
 
 module.exports = {
     renderHomepage,
-    renderUploadForm,
     uploadFile,
     createNewFolder,
     deleteFolder,
