@@ -30,7 +30,9 @@
                     </form>
                 </div>
 
-                <% if (!folders) { %>
+                    <p><% console.log(folders) %></p> <!-- obrisi to -->
+
+                <% if (!folders || folders.length === 0) { %>
                     <h1>There is no folders</h1>
                 <% } else { %>
                     <h1>File Upload</h1>
